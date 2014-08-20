@@ -1,0 +1,25 @@
+/.gradle
+
+#build results
+/classes
+/build
+/out
+/bin
+/build
+/target
+*.log
+*.class
+
+# IDE files
+/.idea
+/.project
+/.settings
+/*.iml
+/*.ipr
+/*.iws
+/*.classpath
+/*.project
+/*.settings
+
+# SVN #
+.svn
