@@ -92,7 +92,7 @@ public class PagesServlet extends HttpServlet {
             resp.setContentType("text/html");
             resp.setCharacterEncoding("UTF-8");
             String res = "";
-            res = render("", path, page, WebOperationInput.convertRequestToMap(req), new HashMap<String, Object>(), req, resp);
+            res = render("", path, page, new WebOperationInput(req, resp), new HashMap<String, Object>(), req, resp);
             resp.getOutputStream().write(res.getBytes(Charset.forName("UTF-8")));
         } finally {
             RequestScope.finish();
@@ -125,8 +125,8 @@ public class PagesServlet extends HttpServlet {
      * @param resp                     Response
      * @return Rendered page
      */
-    protected static String render(String currentFileDirectoryPath, final String webappDirectoryPath, String pagePath,
-                                   final Map<String, Object> params, Map<String, Object> pageArguments,
+    protected static String render(final String currentFileDirectoryPath, final String webappDirectoryPath, final String pagePath,
+                                   final WebOperationInput params, final Map<String, Object> pageArguments,
                                    final HttpServletRequest req, final HttpServletResponse resp) {
         String pageRealPath = "";
         if (pagePath.startsWith("/")) {
@@ -140,11 +140,7 @@ public class PagesServlet extends HttpServlet {
         try {
 
 
-            final String cp = pageRealPath.substring(0, pageRealPath.lastIndexOf(File.separator));
-
-            RequestScope.get().getData().put(CURRENT_PATH, cp);
-            RequestScope.get().getData().put(DIRECTORY, webappDirectoryPath);
-            RequestScope.get().getData().put(PARAMS, params);
+            final String currentPath = pageRealPath.substring(0, pageRealPath.lastIndexOf(File.separator));
 
             //LOG.debug("Rendering page: " + page);
             Path p1 = FileSystems.getDefault().getPath(pageRealPath);
@@ -172,7 +168,7 @@ public class PagesServlet extends HttpServlet {
             }
 
             Map<String, Object> ctx = new HashMap<String, Object>();
-            PageContext pageContext = new PageContext(req, resp, params);
+            PageContext pageContext = new PageContext(req, resp, params, currentPath, webappDirectoryPath);
             ctx.put("page", pageContext);
             ctx.put("args", pageArguments);
 
@@ -180,7 +176,7 @@ public class PagesServlet extends HttpServlet {
 
             if (pageContext.layoutPath != null && !pageContext.layoutPath.isEmpty()) {
                 pageContext.layoutArgs.put(LAYOUT_CONTENT_VARIABLE, text);
-                text = render(cp, webappDirectoryPath, pageContext.layoutPath, params, pageContext.layoutArgs, req, resp);
+                text = render(currentPath, webappDirectoryPath, pageContext.layoutPath, params, pageContext.layoutArgs, req, resp);
             }
             return text;
         } catch (Throwable e) {
@@ -195,17 +191,23 @@ public class PagesServlet extends HttpServlet {
     public static class PageContext {
         private HttpServletRequest request;
         private HttpServletResponse response;
-        private Map<String, Object> params;
+        private WebOperationInput params;
+        private String currentPath;
+        private String directory;
 
         /**
          * @param request  Request
          * @param response Response
          * @param params   Request params
+         * @param currentPath Current directory path
+         * @param directory Webapp root directory
          */
-        public PageContext(HttpServletRequest request, HttpServletResponse response, Map<String, Object> params) {
+        public PageContext(HttpServletRequest request, HttpServletResponse response, WebOperationInput params, String currentPath, String directory) {
             this.request = request;
             this.response = response;
             this.params = params;
+            this.currentPath = currentPath;
+            this.directory = directory;
         }
 
         private String layoutPath;
@@ -239,12 +241,7 @@ public class PagesServlet extends HttpServlet {
          * @return Rendered page
          */
         public String include(String pagePath, Map<String, Object> args) {
-            String currentPath = RequestScope.get().get(CURRENT_PATH);
-            String directory = RequestScope.get().get(DIRECTORY);
-            Map<String, Object> params = RequestScope.get().get(PARAMS);
-            HttpServletRequest req = RequestScope.get().getRequest();
-            HttpServletResponse resp = RequestScope.get().getResponse();
-            String t = render(currentPath, directory, pagePath, params, args, req, resp);
+            String t = render(currentPath, directory, pagePath, params, args, request, response);
             return t;
         }
 
@@ -265,7 +262,7 @@ public class PagesServlet extends HttpServlet {
         /**
          * @return Params
          */
-        public Map<String, Object> getParams() {
+        public WebOperationInput getParams() {
             return params;
         }
     }

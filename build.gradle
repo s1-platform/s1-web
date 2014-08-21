@@ -11,6 +11,7 @@ ext.libs = [
         testng : 'org.testng:testng:6.8.8',
         groovy : 'org.codehaus.groovy:groovy-all:2.3.6',
         commons_io : 'commons-io:commons-io:2.4',
+        commons_codec : 'commons-codec:commons-codec:1.9',
         slf4j : 'org.slf4j:slf4j-api:1.7.5',
         log4j : 'log4j:log4j:1.2.17',
         slf4j_log4j : 'org.slf4j:slf4j-log4j12:1.7.5',
@@ -84,20 +85,21 @@ configurations { tomcat }
 
 task tomcatRun(type: JavaExec) {
 	main = "org.s1.tomcat.TomcatMain"
-	args = ["start", "localhost", port, "/$project.name", "$projectDir/webapp", stopPort, 'shutdown' ]
+	args = ["start", "localhost", port, "/$project.name", "$projectDir/test/webapp", stopPort, 'shutdown' ]
 	classpath = configurations.tomcat
 	classpath += configurations.compile
 	classpath += configurations.runtime
+    classpath += configurations.testCompile
+    classpath += configurations.testRuntime
 	classpath += files("$buildDir/classes/main")
 	classpath += files("$buildDir/resources/main")
+    classpath += files("$buildDir/classes/test")
+    classpath += files("$buildDir/resources/test")
 	systemProperties([
-			"s1.ConfigHome": "${projectDir}/config",
 			"file.encoding": "UTF-8"
 	])
 }
-rootProject.subprojects.each{
-	tomcatRun.dependsOn(tasks.getByPath(":${it.name}:classes"))
-}
+tomcatRun.dependsOn('testClasses')
 
 task tomcatStop(type: JavaExec) {
 	main = "org.s1.tomcat.TomcatMain"
@@ -131,7 +133,6 @@ test {
 	classpath += files("$buildDir/resources/test")
 
 	//s1 options home
-	systemProperty 's1.ConfigHome', "classpath:/config"
 	systemProperty 's1test.http.host', "localhost"
 	systemProperty 's1test.http.port', "${port}"
 	systemProperty 's1test.http.context', "/${project.name}"
@@ -177,10 +178,12 @@ dependencies {
     compile libs.cron4j
     compile libs.groovy
     compile libs.hazelcast
+    compile libs.commons_io
+    compile libs.commons_codec
 	
-	testCompile 'org.s1-platform:s1-testing:2.5.6'
+	testCompile 'org.s1-platform:s1-testing:2.4.6'
 	providedCompile libs.servlet
-	tomcat 'org.s1-platform:s1-tomcat-embedded:2.5.6'
+	tomcat 'org.s1-platform:s1-tomcat-embedded:2.4.6'
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {

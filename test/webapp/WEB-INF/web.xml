@@ -7,6 +7,7 @@
   ~ file 'LICENSE', which is part of this source code package.
   -->
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID" version="3.0">
+    <!-- UTF-8 Filter -->
     <filter>
         <filter-name>CharsetEncodingFilter</filter-name>
         <filter-class>org.s1.web.CharsetEncodingFilter</filter-class>
@@ -15,36 +16,45 @@
             <param-value>UTF-8</param-value>
         </init-param>
     </filter>
-
     <filter-mapping>
         <filter-name>CharsetEncodingFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
+    <!-- Application lifecycle listener -->
     <listener>
-        <listener-class>org.s1.lifecycle.LifecycleListener</listener-class>
-    </listener>
-    <listener>
-        <listener-class>org.s1.background.BackgroundListener</listener-class>
+        <listener-class>test.Application</listener-class>
     </listener>
 
-    <!-- Main dispatcher servlet. Serves business logic of application. -->
+    <!-- Service dispatcher servlet -->
     <servlet>
-        <servlet-name>dispatcher</servlet-name>
-        <servlet-class>org.s1.weboperation.DispatcherServlet</servlet-class>
+        <servlet-name>services</servlet-name>
+        <servlet-class>org.s1.web.services.ServiceDispatcherServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet-mapping>
-        <servlet-name>dispatcher</servlet-name>
-        <url-pattern>/dispatcher/*</url-pattern>
+        <servlet-name>services</servlet-name>
+        <url-pattern>/services/*</url-pattern>
     </servlet-mapping>
 
+    <!-- Pages servlet -->
+    <servlet>
+        <servlet-name>pages</servlet-name>
+        <servlet-class>org.s1.web.pages.PagesServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>pages</servlet-name>
+        <url-pattern>*.gsp</url-pattern>
+    </servlet-mapping>
+
+    <!-- URL Mapping filter -->
     <filter>
-        <filter-name>S1ScriptPages</filter-name>
-        <filter-class>org.s1.script.pages.S1ScriptFilter</filter-class>
+        <filter-name>router</filter-name>
+        <filter-class>org.s1.web.routing.URLRewriteFilter</filter-class>
     </filter>
     <filter-mapping>
-        <filter-name>S1ScriptPages</filter-name>
+        <filter-name>router</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
