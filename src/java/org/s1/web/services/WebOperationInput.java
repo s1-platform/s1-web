@@ -24,6 +24,16 @@ public class WebOperationInput {
     private String id = UUID.randomUUID().toString();
     private HttpServletRequest request;
     private HttpServletResponse response;
+    private Object data;
+
+    protected <T> T getData(){
+        return (T)data;
+    }
+
+    protected <T> T setData(T data){
+        this.data = data;
+        return data;
+    }
 
     /**
      * @param request  Request
@@ -58,36 +68,46 @@ public class WebOperationInput {
     }
 
     public JSONData asJSON() {
+        if(this.data!=null)
+            return getData();
         try {
-            return new JSONData(request);
+            return setData(new JSONData(request));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     public TextData asText() {
+        if(this.data!=null)
+            return getData();
         try {
-            return new TextData(request);
+            return setData(new TextData(request));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     public XMLData asXML() {
+        if(this.data!=null)
+            return getData();
         try {
-            return new XMLData(request);
+            return setData(new XMLData(request));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     public FormData asForm() {
-        return new FormData(request);
+        if(this.data!=null)
+            return getData();
+        return setData(new FormData(request));
     }
 
     public MultipartFormData asMultipart() {
+        if(this.data!=null)
+            return getData();
         try {
-            return new MultipartFormData(request);
+            return setData(new MultipartFormData(request));
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (ServletException e) {
@@ -96,8 +116,10 @@ public class WebOperationInput {
     }
 
     public SOAPData asSOAP() {
+        if(this.data!=null)
+            return getData();
         try {
-            return new SOAPData(request);
+            return setData(new SOAPData(request));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

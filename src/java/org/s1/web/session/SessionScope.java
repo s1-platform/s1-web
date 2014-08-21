@@ -185,7 +185,7 @@ public class SessionScope {
         /**
          * Session id
          *
-         * @return
+         * @return Id
          */
         public String getId() {
             return id;
@@ -194,7 +194,7 @@ public class SessionScope {
         /**
          * Create timestamp
          *
-         * @return
+         * @return milliseconds
          */
         public long getCreated() {
             return created;
@@ -203,7 +203,7 @@ public class SessionScope {
         /**
          * Last used timestamp
          *
-         * @return
+         * @return milliseconds
          */
         public long getLastUsed() {
             return lastUsed;

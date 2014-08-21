@@ -32,7 +32,7 @@ public class ServiceDispatcherServlet extends HttpServlet {
     private static final Operations operations = new Operations();
 
     /**
-     * @return
+     * @return Operations
      */
     public static Operations getOperations() {
         return operations;

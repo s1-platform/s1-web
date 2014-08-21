@@ -237,6 +237,30 @@ public class JSONData extends WebOperationOutput {
         return this;
     }
 
+    /**
+     *
+     * @param args Key, Value array
+     * @return HashMap
+     */
+    public static Map<String,Object> newSOHashMap(Object ... args){
+        return newHashMap(String.class,Object.class,args);
+    }
+
+    /**
+     *
+     * @param args Key, Value array
+     * @param <K> Key type
+     * @param <V> Value type
+     * @return HashMap
+     */
+    public static <K,V> Map<K,V> newHashMap(Object ... args){
+        Map<K, V> m = new HashMap<K, V>();
+        for (int i = 0; i < args.length; i += 2) {
+            m.put((K) args[i], i + 1 >= args.length ? null : (V) args[i + 1]);
+        }
+        return m;
+    }
+
     protected static String[] tokenizePath(String path) {
         String s = path;
         s = s.replace("&", "&amp;");
