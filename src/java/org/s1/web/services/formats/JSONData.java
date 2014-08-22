@@ -243,7 +243,7 @@ public class JSONData extends WebOperationOutput {
      * @return HashMap
      */
     public static Map<String,Object> newSOHashMap(Object ... args){
-        return newHashMap(String.class,Object.class,args);
+        return newHashMap(args);
     }
 
     /**

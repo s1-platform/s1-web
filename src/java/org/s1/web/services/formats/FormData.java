@@ -82,7 +82,7 @@ public class FormData extends WebOperationOutput {
                         throw new IllegalArgumentException("Unsupported encoding: " + encoding, e);
                     }
                 }
-                if (!data.containsKey(nv))
+                if (!data.containsKey(n))
                     data.put(n, new ArrayList<String>());
                 List<String> list = data.get(n);
                 list.add(v);

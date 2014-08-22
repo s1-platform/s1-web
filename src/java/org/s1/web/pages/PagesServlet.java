@@ -1,6 +1,7 @@
 package org.s1.web.pages;
 
 import groovy.text.GStringTemplateEngine;
+import groovy.text.SimpleTemplateEngine;
 import groovy.text.Template;
 import org.s1.web.services.WebOperationInput;
 import org.s1.web.session.RequestScope;
@@ -52,7 +53,7 @@ public class PagesServlet extends HttpServlet {
     /**
      * Layout content variable
      */
-    private static final String LAYOUT_CONTENT_VARIABLE = "$layout_context";
+    private static final String LAYOUT_CONTENT_VARIABLE = "layout_content";
 
     private static final String CURRENT_PATH = "pages:currentPath";
     private static final String DIRECTORY = "pages:currentPath";
@@ -151,7 +152,8 @@ public class PagesServlet extends HttpServlet {
                 }
             }
             if (!templateCache.containsKey(pageRealPath)) {
-                GStringTemplateEngine engine = new GStringTemplateEngine();
+                //GStringTemplateEngine engine = new GStringTemplateEngine();
+                SimpleTemplateEngine engine = new SimpleTemplateEngine();
                 String temp = new String(Files.readAllBytes(p1), StandardCharsets.UTF_8);
                 temp = temp.replace("$", "\\$");
                 Template template = engine.createTemplate(
