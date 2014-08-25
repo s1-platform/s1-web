@@ -13,14 +13,14 @@ import java.util.concurrent.ConcurrentHashMap;
  * <br>
  * Add it to web.xml:
  * <pre><code>
- * &lt;servlet>
- *  &lt;servlet-name>services&lt;/servlet-name>
- *  &lt;servlet-class>org.s1.web.services.ServiceDispatcherServlet&lt;/servlet-class>
- *  &lt;load-on-startup>1&lt;/load-on-startup>
- * &lt;/servlet>
- * &lt;servlet-mapping>
- *  &lt;servlet-name>services&lt;/servlet-name>
- *  &lt;url-pattern>/services/*&lt;/url-pattern>
+ * &lt;servlet&gt;
+ *  &lt;servlet-name&gt;services&lt;/servlet-name&gt;
+ *  &lt;servlet-class&gt;org.s1.web.services.ServiceDispatcherServlet&lt;/servlet-class&gt;
+ *  &lt;load-on-startup&gt;1&lt;/load-on-startup&gt;
+ * &lt;/servlet&gt;
+ * &lt;servlet-mapping&gt;
+ *  &lt;servlet-name&gt;services&lt;/servlet-name&gt;
+ *  &lt;url-pattern&gt;/services/*&lt;/url-pattern&gt;
  * &lt;/servlet-mapping&gt;
  * </code></pre>
  * Add your WebOperations from {@link org.s1.web.ApplicationFilter} <code>ServiceDispatcherServlet.getOperations().add("MyOperation", myWebOperationImpl)</code>
@@ -129,8 +129,8 @@ public class ServiceDispatcherServlet extends HttpServlet {
      *
      * @param request  Request
      * @param response Response
-     * @throws ServletException
-     * @throws IOException
+     * @throws ServletException ServletException
+     * @throws IOException IOException
      */
     protected void process(HttpServletRequest request,
                            HttpServletResponse response) throws ServletException, IOException {

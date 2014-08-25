@@ -20,8 +20,8 @@ public abstract class WebOperation {
      *
      * @param request  Request
      * @param response Response
-     * @throws ServletException
-     * @throws IOException
+     * @throws ServletException ServletException
+     * @throws IOException IOException
      */
     public void request(HttpServletRequest request,
                         HttpServletResponse response) throws ServletException, IOException {

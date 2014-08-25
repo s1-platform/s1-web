@@ -22,7 +22,7 @@ public class TextData extends WebOperationOutput {
     /**
      *
      * @param req Request
-     * @throws IOException
+     * @throws IOException IOException
      */
     public TextData(HttpServletRequest req) throws IOException {
         this.encoding = req.getCharacterEncoding();

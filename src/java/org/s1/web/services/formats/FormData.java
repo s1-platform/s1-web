@@ -1,6 +1,7 @@
 package org.s1.web.services.formats;
 
 import org.s1.web.services.WebOperationOutput;
+import org.s1.web.formats.Types;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -124,7 +125,7 @@ public class FormData extends WebOperationOutput {
     public <T> T getFirst(Class<T> t, String param) {
         if (!data.containsKey(param))
             data.put(param, new ArrayList<String>());
-        return ObjectTypes.cast(data.get(param).get(0), t);
+        return Types.cast(data.get(param).get(0), t);
     }
 
     /**

@@ -2,6 +2,7 @@ package org.s1.web.services.formats;
 
 import org.apache.commons.io.IOUtils;
 import org.s1.web.services.WebOperationOutput;
+import org.s1.web.formats.Types;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -70,8 +71,8 @@ public class MultipartFormData extends WebOperationOutput {
 
     /**
      * @param request Request
-     * @throws IOException
-     * @throws ServletException
+     * @throws IOException IOException
+     * @throws ServletException ServletException
      */
     public MultipartFormData(HttpServletRequest request) throws IOException, ServletException {
         this.encoding = request.getCharacterEncoding();
@@ -155,7 +156,7 @@ public class MultipartFormData extends WebOperationOutput {
     public <T> T getFirst(Class<T> t, String param) {
         if (!params.containsKey(param))
             params.put(param, new ArrayList<String>());
-        return ObjectTypes.cast(params.get(param).get(0), t);
+        return Types.cast(params.get(param).get(0), t);
     }
 
     /**

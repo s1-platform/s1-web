@@ -4,11 +4,15 @@ import groovy.json.JsonOutput;
 import groovy.json.JsonSlurper;
 import org.apache.commons.io.IOUtils;
 import org.s1.web.services.WebOperationOutput;
+import org.s1.web.formats.Maps;
+import org.s1.web.formats.Types;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * JSON Data
@@ -61,8 +65,8 @@ public class JSONData extends WebOperationOutput {
     }
 
     /**
-     * @param req      Request
-     * @throws IOException
+     * @param req Request
+     * @throws IOException IOException
      */
     public JSONData(HttpServletRequest req) throws IOException {
         this(IOUtils.toString(req.getInputStream(), req.getCharacterEncoding()), req.getCharacterEncoding());
@@ -89,7 +93,7 @@ public class JSONData extends WebOperationOutput {
      * @return JSON String
      */
     public String toJSON() {
-        Map<String, Object> m = copy(data);
+        Map<String, Object> m = Types.copy(data);
         m = toWire(m);
         return JsonOutput.toJson(m);
     }
@@ -103,27 +107,7 @@ public class JSONData extends WebOperationOutput {
      * @return Object
      */
     public <T> T get(String path, T def) {
-        Object ret = def;
-        try {
-            String[] parts = tokenizePath(path);
-            Object o = data;
-            for (int i = 0; i < parts.length; i++) {
-                int[] j = getNumber(parts[i]);
-                String name = getLocalName(parts[i]);
-                o = ((Map) o).get(name);
-                if (j != null) {
-                    for (int k = 0; k < j.length; k++) {
-                        o = ((List) o).get(j[k]);
-                    }
-                }
-            }
-            if (o != null)
-                ret = o;
-            else
-                ret = def;
-        } catch (Throwable e) {
-        }
-        return (T) ret;
+        return Maps.get(data, path, def);
     }
 
     /**
@@ -136,7 +120,7 @@ public class JSONData extends WebOperationOutput {
      * @return Casted object
      */
     public <T> T get(Class<T> t, String path, T def) {
-        return ObjectTypes.cast(get(path, def), t);
+        return Maps.get(t, data, path, def);
     }
 
     /**
@@ -148,7 +132,7 @@ public class JSONData extends WebOperationOutput {
      * @return Casted object
      */
     public <T> T get(Class<T> t, String path) {
-        return ObjectTypes.cast(get(path, null), t);
+        return Maps.get(t, data, path);
     }
 
     /**
@@ -159,189 +143,12 @@ public class JSONData extends WebOperationOutput {
      * @return Object
      */
     public <T> T get(String path) {
-        return get(path, null);
+        return Maps.get(data, path);
     }
 
-    /**
-     * Set value to key identified by path
-     *
-     * @param path Path
-     * @param val  Value
-     * @return JSONData
-     */
-    public JSONData set(String path, Object val) {
-        String[] parts = tokenizePath(path);
-        Map<String, Object> o = data;
-        for (int i = 0; i < parts.length; i++) {
-            int[] j = getNumber(parts[i]);
-            String name = getLocalName(parts[i]);
-            if (i == parts.length - 1) {
-                if (j != null) {
-                    if (!o.containsKey(name)) {
-                        o.put(name, new ArrayList());
-                    }
-                    List<Object> o1 = (List<Object>) o.get(name);
 
-                    for (int k = 0; k < j.length; k++) {
-                        if (o1.size() <= j[k]) {
-                            for (int ii = 0; ii <= j[k] - o1.size(); ii++)
-                                o1.add(null);
-                            if (k == j.length - 1) {
-                                o1.set(j[k], new HashMap());
-                            } else {
-                                o1.set(j[k], new ArrayList());
-                            }
-                        }
-                        if (k == j.length - 1) {
-                            o1.set(j[k], val);
-                        } else {
-                            o1 = (List<Object>) o1.get(j[k]);
-                        }
-                    }
-                } else {
-                    o.put(name, val);
-                }
-            } else {
-
-                if (j != null) {
-                    if (!o.containsKey(name)) {
-                        o.put(name, new ArrayList());
-                    }
-                    List<Object> o1 = (List<Object>) o.get(name);
-
-                    for (int k = 0; k < j.length; k++) {
-                        if (o1.size() <= j[k]) {
-                            for (int ii = o1.size(); ii <= j[k]; ii++) {
-                                o1.add(null);
-                            }
-                            if (k == j.length - 1) {
-                                o1.set(j[k], new HashMap());
-                            } else {
-                                o1.set(j[k], new ArrayList());
-                            }
-                        }
-                        if (k == j.length - 1) {
-                            o = (Map<String, Object>) o1.get(j[k]);
-                        } else {
-                            o1 = (List<Object>) o1.get(j[k]);
-                        }
-                    }
-                } else {
-                    if (!o.containsKey(name)) {
-                        o.put(name, new HashMap());
-                    }
-                    o = (Map<String, Object>) o.get(name);
-                }
-            }
-        }
-        return this;
-    }
-
-    /**
-     *
-     * @param args Key, Value array
-     * @return HashMap
-     */
-    public static Map<String,Object> newSOHashMap(Object ... args){
-        return newHashMap(args);
-    }
-
-    /**
-     *
-     * @param args Key, Value array
-     * @param <K> Key type
-     * @param <V> Value type
-     * @return HashMap
-     */
-    public static <K,V> Map<K,V> newHashMap(Object ... args){
-        Map<K, V> m = new HashMap<K, V>();
-        for (int i = 0; i < args.length; i += 2) {
-            m.put((K) args[i], i + 1 >= args.length ? null : (V) args[i + 1]);
-        }
-        return m;
-    }
-
-    protected static String[] tokenizePath(String path) {
-        String s = path;
-        s = s.replace("&", "&amp;");
-        s = s.replace("\\\\", "&backslash;");
-        s = s.replace("\\.", "&dot;");
-        String[] p = s.split("\\.");
-        String[] p2 = new String[p.length];
-        for (int i = 0; i < p.length; i++) {
-            p2[i] = p[i]
-                    .replace("&dot;", ".")
-                    .replace("&backslash;", "\\\\")
-                    .replace("&amp;", "&");
-        }
-        return p2;
-    }
-
-    protected static int[] getNumber(String name) {
-        String s = name;
-        s = s.replace("&", "&amp;");
-        s = s.replace("\\\\", "&backslash;");
-        s = s.replace("\\[", "&open;");
-        s = s.replace("\\]", "&close;");
-        if (s.indexOf("[") < s.indexOf("]")) {
-            String s1 = s.substring(s.indexOf("[") + 1, s.lastIndexOf("]"));
-            String[] s2 = s1.split("\\]\\[");
-            int[] r = new int[s2.length];
-            for (int i = 0; i < s2.length; i++) {
-                r[i] = Integer.parseInt(s2[i]);
-            }
-            return r;
-        }
-        return null;
-    }
-
-    protected static String getLocalName(String name) {
-        String s = name;
-        s = s.replace("&", "&amp;");
-        s = s.replace("\\\\", "&backslash;");
-        s = s.replace("\\[", "&open;");
-        s = s.replace("\\]", "&close;");
-        String s1 = s;
-        if (s.indexOf("[") < s.indexOf("]")) {
-            s1 = s.substring(0, s.indexOf("["));
-        }
-        name = s1.replace("&open;", "[").replace("&close;", "]")
-                .replace("&backslash;", "\\")
-                .replace("&amp;", "&");
-        //name = name.replace("\\[", "[").replace("\\]", "]");
-        return name;
-    }
-
-    protected static <T> T iterate(Object o, Function closure) {
-        return (T) iterateNamedObjectFromLeaf(null, "", o, closure);
-    }
-
-    protected static Object iterateNamedObjectFromLeaf(String name, String path, Object o, Function closure) {
-        if (o instanceof Map) {
-            final Map<String, Object> m1 = new HashMap<String, Object>();
-            Map<String, Object> m = (Map<String, Object>) o;
-            for (Map.Entry<String, Object> e : m.entrySet()) {
-                m1.put(e.getKey(),
-                        iterateNamedObjectFromLeaf(e.getKey(), (!path.isEmpty() ? path + "." + e.getKey() : e.getKey()), e.getValue(), closure));
-            }
-            return closure.call(name, m1, path);
-        } else if (o instanceof List) {
-            List l = new ArrayList();
-            for (int i = 0; i < ((List) o).size(); i++) {
-                l.add(iterateNamedObjectFromLeaf(null, path + "[" + i + "]", ((List) o).get(i), closure));
-            }
-            return closure.call(name, l, path);
-        } else {
-            return closure.call(name, o, path);
-        }
-    }
-
-    protected static abstract class Function {
-        public abstract Object call(String name, Object value, String path);
-    }
-
-    protected static Map<String, Object> toWire(Map<String, Object> json) {
-        return (Map<String, Object>) iterate(json, new Function() {
+    protected Map<String, Object> toWire(Map<String, Object> json) {
+        return (Map<String, Object>) Maps.iterate(json, new Maps.IterateFunction() {
             @Override
             public Object call(String name, Object value, String path) {
                 try {
@@ -355,8 +162,8 @@ public class JSONData extends WebOperationOutput {
         });
     }
 
-    protected static Map<String, Object> fromWire(Map<String, Object> json) {
-        return (Map<String, Object>) iterate(json, new Function() {
+    protected Map<String, Object> fromWire(Map<String, Object> json) {
+        return (Map<String, Object>) Maps.iterate(json, new Maps.IterateFunction() {
             @Override
             public Object call(String name, Object value, String path) {
                 if (value instanceof String) {
@@ -377,22 +184,6 @@ public class JSONData extends WebOperationOutput {
                 return value;
             }
         });
-    }
-
-    protected static <T> T copy(T orig) {
-        if (orig == null)
-            return null;
-        try {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            ObjectOutputStream oos = new ObjectOutputStream(bos);
-            oos.writeObject(orig);
-            oos.flush();
-            ByteArrayInputStream bin = new ByteArrayInputStream(bos.toByteArray());
-            ObjectInputStream ois = new ObjectInputStream(bin);
-            return (T) ois.readObject();
-        } catch (Throwable e) {
-            return null;
-        }
     }
 
     @Override

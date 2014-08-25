@@ -18,7 +18,11 @@ ext.libs = [
 		logback: 'ch.qos.logback:logback-classic:1.1.2',
         hazelcast : 'com.hazelcast:hazelcast:3.2.5',
         servlet : 'javax.servlet:javax.servlet-api:3.0.1',
-        cron4j: 'it.sauronsoftware.cron4j:cron4j:2.2.5'
+        cron4j: 'it.sauronsoftware.cron4j:cron4j:2.2.5',
+        validation_api: 'javax.validation:validation-api:1.1.0.Final',
+        validation: 'org.hibernate:hibernate-validator:5.1.2.Final',
+        javax_el_api: 'javax.el:javax.el-api:2.2.4',
+        javax_el: 'org.glassfish.web:javax.el:2.2.4'
 ]
 
 /**
@@ -181,6 +185,10 @@ dependencies {
     compile libs.hazelcast
     compile libs.commons_io
     compile libs.commons_codec
+    compile libs.validation_api
+    compile libs.validation
+    compile libs.javax_el
+    compile libs.javax_el_api
 	
 	testCompile 'org.s1-platform:s1-testing:2.4.6'
 	providedCompile libs.servlet

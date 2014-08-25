@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
  *  &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
  * &lt;/filter-mapping&gt;
  * </code></pre>
- * Add new rules in {@link org.s1.web.ApplicationFilter}: <code>URLRewriteFilter.getMapping().add("test/(.+?)/(.+?)","test.gsp?id=$1&p=$2")</code>
+ * Add new rules in {@link org.s1.web.ApplicationFilter}: <code>URLRewriteFilter.getMapping().add("test/(.+?)/(.+?)","test.gsp?id=$1&amp;p=$2")</code>
  *
  * @author Grigory Pykhov
  */

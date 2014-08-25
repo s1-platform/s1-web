@@ -14,7 +14,7 @@ public abstract class WebOperationOutput {
      * Render data to response according to format
      *
      * @param response Response
-     * @throws IOException
+     * @throws IOException IOException
      */
     public abstract void render(HttpServletResponse response) throws IOException;
 }

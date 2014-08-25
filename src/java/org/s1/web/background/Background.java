@@ -43,6 +43,7 @@ public class Background {
          * @param name    Process name
          * @param cron    Cron4j config string (see http://www.sauronsoftware.it/projects/cron4j/manual.php)
          * @param process Process
+         * @return ProcessHolder
          */
         public ProcessHolder addProcess(String name, String cron, Runnable process) {
             String id = scheduler.schedule(cron, process);
@@ -53,6 +54,7 @@ public class Background {
 
         /**
          * Start all processes
+         * @return ProcessHolder
          */
         public ProcessHolder startAll() {
             scheduler.start();
@@ -62,6 +64,7 @@ public class Background {
 
         /**
          * Stop all processes
+         * @return ProcessHolder
          */
         public ProcessHolder stopAll() {
             scheduler.stop();

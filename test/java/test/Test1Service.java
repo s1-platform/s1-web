@@ -1,5 +1,6 @@
 package test;
 
+import org.s1.web.formats.Soap;
 import org.s1.web.services.WebOperation;
 import org.s1.web.services.WebOperationInput;
 import org.s1.web.services.WebOperationOutput;
@@ -24,7 +25,7 @@ public class Test1Service extends WebOperation {
             put("name", f.getFirst("name"));
             put("date",new Date());
         }});*/
-        return new SOAPData(SOAPData.createSoapFromString("<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:cry=\"http://s1-platform.com/crypto\">\n" +
+        return new SOAPData(Soap.fromSOAPString("<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:cry=\"http://s1-platform.com/crypto\">\n" +
                 "   <soapenv:Header/>\n" +
                 "   <soapenv:Body>\n" +
                 "      <cry:SignRequest>\n" +
@@ -34,6 +35,6 @@ public class Test1Service extends WebOperation {
                 "         <data2></data2>\n" +
                 "      </cry:SignRequest>\n" +
                 "   </soapenv:Body>\n" +
-                "</soapenv:Envelope>","UTF-8"));
+                "</soapenv:Envelope>", "UTF-8"));
     }
 }

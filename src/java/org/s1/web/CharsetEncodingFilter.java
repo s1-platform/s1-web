@@ -28,7 +28,6 @@ import java.io.IOException;
  *  &lt;filter-name&gt;CharsetEncodingFilter&lt;/filter-name&gt;
  *  &lt;filter-class&gt;org.s1.misc.CharsetEncodingFilter&lt;/filter-class&gt;
  * &lt;/filter&gt;
- * <p/>
  * &lt;filter-mapping&gt;
  *  &lt;filter-name&gt;CharsetEncodingFilter&lt;/filter-name&gt;
  *  &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
@@ -45,7 +44,6 @@ import java.io.IOException;
  *      &lt;param-value&gt;UTF-8&lt;/param-value&gt;
  *  &lt;/init-param&gt;
  * &lt;/filter&gt;
- * <p/>
  * &lt;filter-mapping&gt;
  *  &lt;filter-name&gt;CharsetEncodingFilter&lt;/filter-name&gt;
  *  &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
