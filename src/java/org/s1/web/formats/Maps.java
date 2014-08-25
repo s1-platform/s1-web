@@ -314,7 +314,7 @@ public class Maps {
                 try {
                     Object o = map.get(pd.getName());
                     //o = convertMapTypeToBeanType(pd.getPropertyType(), o);
-                    o = convertMapTypeToBeanType(pd.getWriteMethod().getParameters()[0].getParameterizedType(), o);
+                    o = convertMapTypeToBeanType(pd.getWriteMethod().getGenericParameterTypes()[0], o);
                     writer.invoke(bean, o);
                 } catch (Exception e) {
                 }
@@ -526,7 +526,7 @@ public class Maps {
                     if (!Types.isNullOrEmpty(path))
                         oo = get(m2, path, null);
                     if (m1Old) {
-                        if (!Objects.equals(o, oo)) {
+                        if (!Types.equals(o, oo)) {
                             DiffBean res = new DiffBean(path, o, oo);
                             boolean b = false;
                             for (DiffBean db : diff) {
@@ -539,7 +539,7 @@ public class Maps {
                             }
                         }
                     } else {
-                        if (!Objects.equals(o, oo)) {
+                        if (!Types.equals(o, oo)) {
                             DiffBean res = new DiffBean(path, oo, o);
                             boolean b = false;
                             for (DiffBean db : diff) {
