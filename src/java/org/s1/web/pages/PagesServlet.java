@@ -55,10 +55,6 @@ public class PagesServlet extends HttpServlet {
      */
     private static final String LAYOUT_CONTENT_VARIABLE = "layout_content";
 
-    private static final String CURRENT_PATH = "pages:currentPath";
-    private static final String DIRECTORY = "pages:currentPath";
-    private static final String PARAMS = "pages:currentPath";
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         process(req, resp);
