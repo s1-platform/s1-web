@@ -154,9 +154,7 @@ public class MultipartFormData extends WebOperationOutput {
      * @return Casted value
      */
     public <T> T getFirst(Class<T> t, String param) {
-        if (!params.containsKey(param))
-            params.put(param, new ArrayList<String>());
-        return Types.cast(params.get(param).get(0), t);
+        return Types.cast(getFirst(param), t);
     }
 
     /**
@@ -166,7 +164,7 @@ public class MultipartFormData extends WebOperationOutput {
     public String getFirst(String param) {
         if (!params.containsKey(param))
             params.put(param, new ArrayList<String>());
-        return params.get(param).get(0);
+        return params.get(param).size()>0?params.get(param).get(0):null;
     }
 
     /**
@@ -189,7 +187,7 @@ public class MultipartFormData extends WebOperationOutput {
     public FileParameter getFirstFile(String file) {
         if (!files.containsKey(file))
             files.put(file, new ArrayList<FileParameter>());
-        return files.get(file).get(0);
+        return files.get(file).size()>0?files.get(file).get(0):null;
     }
 
     /**

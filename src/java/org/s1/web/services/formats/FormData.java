@@ -123,9 +123,7 @@ public class FormData extends WebOperationOutput {
      * @return Casted value
      */
     public <T> T getFirst(Class<T> t, String param) {
-        if (!data.containsKey(param))
-            data.put(param, new ArrayList<String>());
-        return Types.cast(data.get(param).get(0), t);
+        return Types.cast(getFirst(param), t);
     }
 
     /**
@@ -135,7 +133,7 @@ public class FormData extends WebOperationOutput {
     public String getFirst(String param) {
         if (!data.containsKey(param))
             data.put(param, new ArrayList<String>());
-        return data.get(param).get(0);
+        return data.get(param).size()>0?data.get(param).get(0):null;
     }
 
     /**
