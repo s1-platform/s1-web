@@ -460,22 +460,25 @@ public class Maps {
     public static <T> T convertBeanTypeToMapType(Object val) {
         if (val instanceof Map) {
             Map l = (Map) val;
+            Map l2 = new HashMap();
             for (Object k : l.keySet()) {
-                l.put(k, convertBeanTypeToMapType(l.get(k)));
+                l2.put(k, convertBeanTypeToMapType(l.get(k)));
             }
-            return (T)l;
+            return (T)l2;
         } else if (val instanceof List) {
             List l = (List) val;
-            for (int i = 0; i < l.size(); i++) {
-                l.set(i, convertBeanTypeToMapType(l.get(i)));
+            List l2 = new ArrayList();
+            for (Object it:l) {
+                l2.add(convertBeanTypeToMapType(it));
             }
-            return (T)l;
+            return (T)l2;
         } else if (val instanceof Set) {
-            List l = new ArrayList();
-            for (Object o : (Set) val) {
-                l.add(convertBeanTypeToMapType(o));
+            Set l = (Set)val;
+            Set l2 = new HashSet();
+            for (Object o : l) {
+                l2.add(convertBeanTypeToMapType(o));
             }
-            return (T)l;
+            return (T)l2;
         } else if (val instanceof Integer || val instanceof String || val instanceof Date || val instanceof Boolean || val instanceof Long
                 || val instanceof Double || val instanceof Float || val instanceof BigInteger || val instanceof BigDecimal
                 || val.getClass() == int.class || val.getClass() == long.class || val.getClass() == boolean.class ||
