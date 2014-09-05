@@ -257,30 +257,8 @@ import org.ajoberstar.grgit.*
 
 release {
     grgit = Grgit.open(project.file('.'))
-    remote = 'origin' // default is 'origin'
-    prefixTagNameWithV = true // default is true
-    releaseTasks = ['build', /*'publishGhPages',*/ 'uploadArchives'] // defaults to []
-    enforceSinceTags = false // default is false
-
-    version {
-        //untaggedStages = ['dev'] // default is ['dev']
-        //taggedStages = ['milestone','rc'] // default is ['milestone', 'rc']
-        //useBuildMetadataForStage = { stage->stage!='final' } // default is { stage -> stage != 'final' }
-        //createBuildMetadata = { new Date().format('yyyy.MM.dd.hh.mm.ss') } // default is { grgit.head().abbreviatedId }
-    }
-
-    generateTagMessage = { version -> // default is "Release of ${version}"
-        StringBuilder builder = new StringBuilder()
-        builder.append('Release of ')
-        builder.append(version)
-        builder.append('\n\n')
-        grgit.log {
-            range "v${version.nearest.normal.toString()}^{commit}", 'HEAD'
-        }.inject(builder) { bldr, commit ->
-            bldr.append('* ')
-            bldr.append(commit.shortMessage)
-            bldr.append('\n')
-        }
-        builder.toString()
-    }
+    remote = 'origin'
+    prefixTagNameWithV = true
+    releaseTasks = ['build', 'uploadArchives']
+    enforceSinceTags = false
 }
