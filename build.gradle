@@ -2,31 +2,23 @@
  * Group, version
  */
 group = 'org.s1-platform'
-version = '3.0.0-SNAPSHOT'
+version = ''
 
 /**
- * Libraries
+ * Build script
  */
-ext.libs = [
-        testng : 'org.testng:testng:6.8.8',
-        groovy : 'org.codehaus.groovy:groovy-all:2.3.6',
-        commons_io : 'commons-io:commons-io:2.4',
-        commons_codec : 'commons-codec:commons-codec:1.9',
-        slf4j : 'org.slf4j:slf4j-api:1.7.5',
-        log4j : 'log4j:log4j:1.2.17',
-        slf4j_log4j : 'org.slf4j:slf4j-log4j12:1.7.5',
-		logback: 'ch.qos.logback:logback-classic:1.1.2',
-        hazelcast : 'com.hazelcast:hazelcast:3.2.5',
-        servlet : 'javax.servlet:javax.servlet-api:3.0.1',
-        cron4j: 'it.sauronsoftware.cron4j:cron4j:2.2.5',
-        validation_api: 'javax.validation:validation-api:1.1.0.Final',
-        validation: 'org.hibernate:hibernate-validator:5.1.2.Final',
-        javax_el_api: 'javax.el:javax.el-api:2.2.4',
-        javax_el: 'org.glassfish.web:javax.el:2.2.4'
-]
+buildscript {
+    repositories {
+        // jcenter()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.ajoberstar:gradle-git:0.9.0'
+    }
+}
 
 /**
- * Common compile, build, tasks
+ * Java settings
  */
 apply plugin: 'java'
 
@@ -38,7 +30,9 @@ compileJava.targetCompatibility = 1.7
 compileTestJava.sourceCompatibility = 1.7
 compileTestJava.targetCompatibility = 1.7
 
-//main
+/**
+ * Sources
+ */
 sourceSets {
 	main {
 		java {
@@ -58,73 +52,26 @@ sourceSets {
 	}
 }
 
-//provided-compile configuration
+/**
+ * Provided-compile configuration
+ */
 configurations { providedCompile }
 
 sourceSets.main.compileClasspath += configurations.providedCompile
 sourceSets.test.compileClasspath += configurations.providedCompile
 sourceSets.test.runtimeClasspath += configurations.providedCompile
 
-//maven repos
-repositories {
-	mavenLocal()
-	mavenCentral()
-}
-
-//javadoc
+/**
+ * Javadoc
+ */
 javadoc{
 	options.encoding = "UTF-8"
     classpath+=configurations.providedCompile
 }
 
 /**
- * Server tests common configuration
+ * Tests
  */
-ext {
-    port= 9999
-    stopPort= 9998
-}
-import org.apache.tools.ant.taskdefs.condition.Os
-
-configurations { tomcat }
-
-task tomcatRun(type: JavaExec) {
-	main = "org.s1.tomcat.TomcatMain"
-	args = ["start", "localhost", port, "/$project.name", "$projectDir/test/webapp", stopPort, 'shutdown' ]
-	classpath = configurations.tomcat
-	classpath += configurations.compile
-	classpath += configurations.runtime
-    classpath += configurations.testCompile
-    classpath += configurations.testRuntime
-	classpath += files("$buildDir/classes/main")
-	classpath += files("$buildDir/resources/main")
-    classpath += files("$buildDir/classes/test")
-    classpath += files("$buildDir/resources/test")
-	systemProperties([
-			"file.encoding": "UTF-8"
-	])
-}
-tomcatRun.dependsOn('testClasses')
-
-task tomcatStop(type: JavaExec) {
-	main = "org.s1.tomcat.TomcatMain"
-	args = ['stop',"localhost",stopPort,"shutdown"]
-	classpath = configurations.tomcat
-}
-
-task tomcatStart(type:ExecWait) {
-	if (Os.isFamily(Os.FAMILY_WINDOWS))
-		command "cmd /c gradlew.bat --no-color --no-daemon :${project.name}:tomcatRun"
-	else if(Os.isFamily(Os.FAMILY_UNIX))
-		command "./gradlew --no-color --no-daemon :${project.name}:tomcatRun"
-	ready = "TestAppServer: Server started"
-	directory "${projectDir}/../.."
-
-	doLast {
-		println("### SERVER STARTED")
-	}
-}
-
 test {
 	useTestNG()
 
@@ -138,9 +85,9 @@ test {
 	classpath += files("$buildDir/resources/test")
 
 	//s1 options home
-	systemProperty 's1test.http.host', "localhost"
-	systemProperty 's1test.http.port', "${port}"
-	systemProperty 's1test.http.context', "/${project.name}"
+	//systemProperty 's1test.http.host', "localhost"
+	//systemProperty 's1test.http.port', "${port}"
+	//systemProperty 's1test.http.context', "/${project.name}"
 
 	// show standard out and standard error of the test JVM(s) on the console
 	testLogging.showStandardStreams = true
@@ -157,14 +104,6 @@ test {
 		logger.lifecycle("Running test: " + descriptor)
 	}
 
-	beforeSuite {
-		tomcatStart.execute();
-	}
-
-	afterSuite {
-		tomcatStop.execute();
-	}
-
 }
 test.dependsOn classes
 test.dependsOn testClasses
@@ -175,24 +114,9 @@ test.dependsOn cleanTest
  */
 apply plugin: 'maven'
 apply plugin: 'signing'
-
-dependencies {
-	compile libs.slf4j
-	compile libs.log4j
-	runtime libs.slf4j_log4j
-    compile libs.cron4j
-    compile libs.groovy
-    compile libs.hazelcast
-    compile libs.commons_io
-    compile libs.commons_codec
-    compile libs.validation_api
-    compile libs.validation
-    compile libs.javax_el
-    compile libs.javax_el_api
-	
-	testCompile 'org.s1-platform:s1-testing:2.4.6'
-	providedCompile libs.servlet
-	tomcat 'org.s1-platform:s1-tomcat-embedded:2.4.6'
+repositories {
+    mavenLocal()
+    mavenCentral()
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
@@ -253,20 +177,20 @@ uploadArchives {
 				}
 
 				scm {
-					url 'https://github.com/s1-platform/s1'
-					connection 'scm:git:ssh://github.com/s1-platform/s1.git'
-					developerConnection 'scm:git:git+ssh://git@github.com/s1-platform/s1.git'
+					url 'https://github.com/s1-platform/s1-web'
+					connection 'scm:git:ssh://github.com/s1-platform/s1-web.git'
+					developerConnection 'scm:git:git+ssh://git@github.com/s1-platform/s1-web.git'
 					tag 'HEAD'
 				}
 
 				issueManagement {
 					system 'GitHub Issue Management'
-					url 'https://github.com/s1-platform/s1/issues'
+					url 'https://github.com/s1-platform/s1-web/issues'
 				}
 
 				ciManagement {
 					system 'Travis CI'
-					url 'https://travis-ci.org/s1-platform/s1/'
+					url 'https://travis-ci.org/s1-platform/s1-web/'
 				}
 
 				licenses {
@@ -281,7 +205,7 @@ uploadArchives {
 					developer {
 						id 'p-gregory'
 						name 'Grigory Pykhov'
-						email 's.one.platform@gmail.com'
+						email 'grigory.pykhov@s1-platform.org'
 						roles {
 							role 'Owner'
 							role 'Architect'
@@ -304,47 +228,59 @@ uploadArchives {
 }
 
 /**
- * Test all
+ * Dependencies
  */
+dependencies {
+    compile 'it.sauronsoftware.cron4j:cron4j:2.2.5'
+    compile 'org.codehaus.groovy:groovy-all:2.3.6'
+    compile 'com.hazelcast:hazelcast:3.2.5'
+    compile 'commons-io:commons-io:2.4'
+    compile 'commons-codec:commons-codec:1.9'
+    compile 'javax.validation:validation-api:1.1.0.Final'
+    compile 'org.hibernate:hibernate-validator:5.1.2.Final'
+    compile 'javax.el:javax.el-api:2.2.4'
+    compile 'org.glassfish.web:javax.el:2.2.4'
+    compile 'org.slf4j:slf4j-api:1.7.5'
+
+    providedCompile 'javax.servlet:javax.servlet-api:3.0.1'
+
+    testRuntime 'log4j:log4j:1.2.17'
+    testRuntime 'org.slf4j:slf4j-log4j12:1.7.5'
+}
 
 /**
- * Exec some process and wait until it starts
+ * Release
  */
-class ExecWait extends DefaultTask {
-    String command
-    String ready
-    String directory
+apply plugin: 'grgit-release'
 
-    @TaskAction
-    def spawnProcess() {
+import org.ajoberstar.grgit.*
 
-        ProcessBuilder builder = new ProcessBuilder(command.split(' '))
-        builder.redirectErrorStream(true)
-        builder.directory(new File(directory))
-        Process process = builder.start()
+release {
+    grgit = Grgit.open(project.file('.'))
+    remote = 'origin' // default is 'origin'
+    prefixTagNameWithV = true // default is true
+    releaseTasks = ['build', /*'publishGhPages',*/ 'uploadArchives'] // defaults to []
+    enforceSinceTags = false // default is false
 
-        InputStream stdout = process.getInputStream()
-        BufferedReader reader = new BufferedReader(new
-                InputStreamReader(stdout))
+    version {
+        //untaggedStages = ['dev'] // default is ['dev']
+        //taggedStages = ['milestone','rc'] // default is ['milestone', 'rc']
+        //useBuildMetadataForStage = { stage->stage!='final' } // default is { stage -> stage != 'final' }
+        //createBuildMetadata = { new Date().format('yyyy.MM.dd.hh.mm.ss') } // default is { grgit.head().abbreviatedId }
+    }
 
-        def line
-        while ((line = reader.readLine()) != null) {
-            println line
-            if (line.contains(ready)) {
-                println "$command is ready"
-                break;
-            }
+    generateTagMessage = { version -> // default is "Release of ${version}"
+        StringBuilder builder = new StringBuilder()
+        builder.append('Release of ')
+        builder.append(version)
+        builder.append('\n\n')
+        grgit.log {
+            range "v${version.nearest.normal.toString()}^{commit}", 'HEAD'
+        }.inject(builder) { bldr, commit ->
+            bldr.append('- ')
+            bldr.append(commit.shortMessage)
+            bldr.append('\n')
         }
-        stdout.close();
-        System.setOut(new PrintStream(new OutputStream() {
-            public void write(int b) {
-                //DO NOTHING
-            }
-        }));
-        System.setErr(new PrintStream(new OutputStream() {
-            public void write(int b) {
-                //DO NOTHING
-            }
-        }));
+        builder.toString()
     }
 }

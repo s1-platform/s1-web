@@ -1,1 +1,3 @@
 rootProject.name = 's1-web'
+
+include 'integ-test'
