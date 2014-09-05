@@ -2,7 +2,7 @@
  * Group, version
  */
 group = 'org.s1-platform'
-version = ''
+//version='0.0.0'
 
 /**
  * Build script
@@ -137,13 +137,13 @@ artifacts {
 //sign only if mavenCentralUser/mavenCentralPassword present
 signing {
 	required{
-		!project.version.endsWith('-SNAPSHOT') && gradle.taskGraph.hasTask("uploadArchives")
+		!project.version.toString().endsWith('-SNAPSHOT') && gradle.taskGraph.hasTask("uploadArchives")
 	}
 	sign configurations.archives
 }
 uploadArchives {
 	doFirst {
-		if(project.version.endsWith('-SNAPSHOT'))
+		if(project.version.toString().endsWith('-SNAPSHOT'))
 			throw new Exception("Cannot upload SNAPSHOT version");
 	}
 	repositories {
@@ -151,7 +151,7 @@ uploadArchives {
 			configuration = configurations.archives
 
 			beforeDeployment { MavenDeployment deployment ->
-					signPom(deployment)
+                signing.signPom(deployment)
 			}
 
 			//~/.gradle/gradle.properties
@@ -277,7 +277,7 @@ release {
         grgit.log {
             range "v${version.nearest.normal.toString()}^{commit}", 'HEAD'
         }.inject(builder) { bldr, commit ->
-            bldr.append('- ')
+            bldr.append('* ')
             bldr.append(commit.shortMessage)
             bldr.append('\n')
         }
