@@ -22,7 +22,7 @@ S1-Platform is deployed to Maven Central.
 
 ```groovy
 //gradle
-comile 'org.s1-platform:s1-web:${s1_version}'
+compile 'org.s1-platform:s1-web:${s1_version}'
 ```
 
 License
