@@ -68,6 +68,14 @@ javadoc{
 	options.encoding = "UTF-8"
     classpath+=configurations.providedCompile
 }
+apply plugin: 'github-pages'
+
+githubPages {
+    repoUri = 'git@github.com:s1-platform/s1-web.git'
+    pages {
+        from javadoc.outputs.files
+    }
+}
 
 /**
  * Tests
@@ -259,6 +267,6 @@ release {
     grgit = Grgit.open(project.file('.'))
     remote = 'origin'
     prefixTagNameWithV = true
-    releaseTasks = ['build', 'uploadArchives']
+    releaseTasks = ['build', 'publishGhPages', 'uploadArchives']
     enforceSinceTags = false
 }
