@@ -71,11 +71,13 @@ javadoc{
 apply plugin: 'github-pages'
 
 githubPages {
-    repoUri = 'git@github.com:s1-platform/s1-web.git'
+    repoUri = 'ssh://git@github.com/s1-platform/s1-web.git'
+    targetBranch = 'gh-pages'
     pages {
         from javadoc.outputs.files
     }
 }
+publishGhPages.dependsOn javadoc
 
 /**
  * Tests

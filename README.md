@@ -1,7 +1,7 @@
-# S1-Platform [![Build Status](https://travis-ci.org/s1-platform/s1.png?branch=master)](https://travis-ci.org/s1-platform/s1)
+# S1-Web [![Build Status](https://travis-ci.org/s1-platform/s1.png?branch=master)](https://travis-ci.org/s1-platform/s1)
 
-S1-Platform - the web application development Java framework.
-For more info look here [http://s1-platform.org](http://s1-platform.org).
+S1-Web - the web application development Java framework.
+[http://s1-pltform.org/s1-web](Javadoc)
 
 Platform is being under active development, so we're very interested in bug reports,
 contributions and the like.
@@ -12,11 +12,17 @@ Using
 S1-Platform is deployed to Maven Central.
 
 ```xml
+<!-- Maven -->
 <dependency>
     <groupId>org.s1-platform</groupId>
-    <artifactId>s1-core</artifactId>
-    <version>${project.version}</version>
+    <artifactId>s1-web</artifactId>
+    <version>${s1_version}</version>
 </dependency>
+```
+
+```groovy
+//gradle
+comile 'org.s1-platform:s1-web:${s1_version}'
 ```
 
 License
