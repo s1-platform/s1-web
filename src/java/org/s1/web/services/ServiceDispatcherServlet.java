@@ -1,6 +1,7 @@
 package org.s1.web.services;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,6 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author Grigory Pykhov
  */
+@MultipartConfig
 public class ServiceDispatcherServlet extends HttpServlet {
 
     private static final Operations operations = new Operations();

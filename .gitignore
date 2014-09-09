@@ -1,12 +1,11 @@
 /.gradle
 
 #build results
-/classes
-/build
-/out
-/bin
-/build
-/target
+classes
+build
+out
+bin
+target
 *.log
 *.class
 
