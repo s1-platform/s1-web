@@ -254,8 +254,9 @@ dependencies {
 
     providedCompile 'javax.servlet:javax.servlet-api:3.0.1'
 
-    testRuntime 'log4j:log4j:1.2.17'
-    testRuntime 'org.slf4j:slf4j-log4j12:1.7.5'
+    testRuntime 'ch.qos.logback:logback-core:1.1.2'
+    testRuntime 'ch.qos.logback:logback-classic:1.1.2'
+
 }
 
 /**

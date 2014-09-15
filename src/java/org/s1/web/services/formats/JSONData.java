@@ -60,7 +60,7 @@ public class JSONData extends WebOperationOutput {
      */
     public JSONData(String json, String encoding) {
         JsonSlurper s = new JsonSlurper();
-        this.data.putAll((Map<String, Object>) s.parseText(json));
+        this.data.putAll(fromWire((Map<String, Object>) s.parseText(json)));
         this.encoding = encoding;
     }
 
