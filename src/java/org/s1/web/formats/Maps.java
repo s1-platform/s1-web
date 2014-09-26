@@ -362,7 +362,7 @@ public class Maps {
             ParameterizedType pt = (ParameterizedType)type;
             Class cls = (Class)pt.getRawType();
             if (Map.class.isAssignableFrom(cls)) {
-                Class<?> tp = (Class<?>) pt.getActualTypeArguments()[0];
+                Class<?> tp = (Class<?>) pt.getActualTypeArguments()[1];
                 //try convert map keys to beans
                 Map l = new HashMap();
                 if (val instanceof Map) {
